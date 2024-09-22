@@ -17,12 +17,19 @@ public class Statistics {
 
     private Integer totalAgents;
     private Integer totalCampaigns;
+    private Integer totalDataTables;
+    private Integer inboundTotal;   // New field for Inbound campaigns
+    private Integer outboundTotal;  // New field for Outbound campaigns
+
     // Constructors
     public Statistics() {}
 
-    public Statistics(Integer totalAgents, Integer totalCampaigns) {
+    public Statistics(Integer totalAgents, Integer totalCampaigns, Integer totalDataTables, Integer inboundTotal, Integer outboundTotal) {
         this.totalAgents = totalAgents;
         this.totalCampaigns = totalCampaigns;
+        this.totalDataTables = totalDataTables;
+        this.inboundTotal = inboundTotal;
+        this.outboundTotal = outboundTotal;
     }
 
 }

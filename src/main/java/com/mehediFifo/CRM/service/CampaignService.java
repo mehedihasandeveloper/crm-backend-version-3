@@ -25,8 +25,16 @@ public class CampaignService {
     // Creating new campaign
     public synchronized Campaign saveCampaign(Campaign campaign) {
         Campaign savedCampaign = repository.save(campaign);
-        Statistics stats = statisticsRepository.findById(1L).orElse(new Statistics(0, 0));
+        Statistics stats = statisticsRepository.findById(1L).orElse(new Statistics(0, 0, 0, 0, 0));
         stats.setTotalCampaigns(stats.getTotalCampaigns() + 1);
+
+        // Check the campaign type and update the relevant total
+        if ("Inbound".equalsIgnoreCase(campaign.getCampaignType())) {
+            stats.setInboundTotal(stats.getInboundTotal() + 1);
+        } else if ("Outbound".equalsIgnoreCase(campaign.getCampaignType())) {
+            stats.setOutboundTotal(stats.getOutboundTotal() + 1);
+        }
+
         statisticsRepository.save(stats);
         return savedCampaign;
     }
@@ -41,7 +49,6 @@ public class CampaignService {
         return repository.findById(id).orElse(null);
     }
 
-
     // Calling a single campaign by Name
     public Campaign getCampaignByName(String name) {
         return repository.findByCampaignName(name);
@@ -50,10 +57,25 @@ public class CampaignService {
     // Deleting a campaign by ID
     public synchronized void deleteCampaign(Long id) {
 
-        Statistics stats = statisticsRepository.findById(1L).orElse(new Statistics(0, 0));
-        stats.setTotalCampaigns(stats.getTotalCampaigns() - 1);
-        statisticsRepository.save(stats);
-        repository.deleteById(id);
+        Optional<Campaign> campaignOpt = repository.findById(id);
+
+        if (campaignOpt.isPresent()) {
+            Campaign campaign = campaignOpt.get();
+
+            // Find the current statistics
+            Statistics stats = statisticsRepository.findById(1L).orElse(new Statistics(0, 0, 0, 0, 0));
+            stats.setTotalCampaigns(stats.getTotalCampaigns() - 1);
+
+            // Decrease the correct count based on campaign type
+            if ("Inbound".equalsIgnoreCase(campaign.getCampaignType())) {
+                stats.setInboundTotal(stats.getInboundTotal() - 1);
+            } else if ("Outbound".equalsIgnoreCase(campaign.getCampaignType())) {
+                stats.setOutboundTotal(stats.getOutboundTotal() - 1);
+            }
+
+            statisticsRepository.save(stats);
+            repository.deleteById(id);
+        }
     }
 
     // Updating a campaign
@@ -89,6 +111,16 @@ public class CampaignService {
     public Integer getTotalCampaigns() {
         Optional<Statistics> stats = statisticsRepository.findById(1L);
         return stats.map(Statistics::getTotalCampaigns).orElse(0);
+    }
+
+    public Integer getTotalInbound() {
+        Optional<Statistics> stats = statisticsRepository.findById(1L);
+        return stats.map(Statistics::getInboundTotal).orElse(0);
+    }
+
+    public Integer getTotalOutbound() {
+        Optional<Statistics> stats = statisticsRepository.findById(1L);
+        return stats.map(Statistics::getOutboundTotal).orElse(0);
     }
 
 }

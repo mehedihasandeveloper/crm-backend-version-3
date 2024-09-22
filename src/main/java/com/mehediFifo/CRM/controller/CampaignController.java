@@ -70,4 +70,14 @@ public class CampaignController {
     public Integer getTotalCampaigns() {
         return service.getTotalCampaigns();
     }
+
+    @GetMapping("/totalInbound")
+    public Integer getTotalInbound() {
+        return service.getTotalInbound();
+    }
+
+    @GetMapping("/totalOutbound")
+    public Integer getTotalOutbound() {
+        return service.getTotalOutbound();
+    }
 }

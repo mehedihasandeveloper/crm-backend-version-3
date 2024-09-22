@@ -22,7 +22,7 @@ public class Campaign {
     private String campaignId;
     private String campaignName;
     private Integer callTarget;
-
+    private String campaignType;
     private Boolean status = true;
 
     @CreationTimestamp

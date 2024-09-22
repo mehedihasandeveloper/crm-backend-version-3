@@ -8,7 +8,6 @@ import com.mehediFifo.CRM.repository.StatisticsRepository;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.bean.HeaderColumnNameMappingStrategy;
-import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +34,7 @@ public class AgentService {
 
     public synchronized Agent addAgent(Agent agent) {
         Agent savedAgent = repository.save(agent);
-        Statistics stats = statisticsRepository.findById(1L).orElse(new Statistics(0, 0));
+        Statistics stats = statisticsRepository.findById(1L).orElse(new Statistics(0, 0, 0, 0, 0));
         stats.setTotalAgents(stats.getTotalAgents() + 1);
         statisticsRepository.save(stats);
         return savedAgent;
@@ -50,7 +49,7 @@ public class AgentService {
     public void removeAgent(Long id) {
         repository.deleteById(id);
 
-        Statistics stats = statisticsRepository.findById(1L).orElse(new Statistics(0, 0));
+        Statistics stats = statisticsRepository.findById(1L).orElse(new Statistics(0, 0, 0, 0, 0));
         stats.setTotalAgents(stats.getTotalAgents() - 1);
         statisticsRepository.save(stats);
     }
@@ -78,7 +77,7 @@ public class AgentService {
         repository.saveAll(agents);
 
         // Update totalAgents in AgentStatistics
-        Statistics stats = statisticsRepository.findById(1L).orElse(new Statistics(0, 0));
+        Statistics stats = statisticsRepository.findById(1L).orElse(new Statistics(0, 0, 0, 0, 0));
         stats.setTotalAgents(stats.getTotalAgents() + agents.size());
         statisticsRepository.save(stats);
         return agents.size();

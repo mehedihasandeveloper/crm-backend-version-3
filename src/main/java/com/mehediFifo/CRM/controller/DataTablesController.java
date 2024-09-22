@@ -46,4 +46,9 @@ public class DataTablesController {
         Page<DataTables> DataTablesWithPagination = service.findDataTablesWithPagination(offset, pageSize);
         return new APIResponse<>(DataTablesWithPagination.getSize(), DataTablesWithPagination);
     }
+
+    @GetMapping("/totalDataTables")
+    public Integer getTotalDataTables() {
+        return service.getTotalDataTables();
+    }
 }
