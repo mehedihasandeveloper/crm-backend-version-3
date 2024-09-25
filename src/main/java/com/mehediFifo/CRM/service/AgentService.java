@@ -111,7 +111,7 @@ public class AgentService {
                             .nagadAcNumber(csvLine.getNagadAcNumber())
                             .bkashAcNumber(csvLine.getBkashAcNumber())
                             .status(true)
-                            .password("FifoAgent007")
+                            .password("agent12345")
                             .build())
                     .collect(Collectors.toSet());
         }

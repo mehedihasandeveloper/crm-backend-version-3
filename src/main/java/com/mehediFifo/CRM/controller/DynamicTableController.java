@@ -1,20 +1,17 @@
 package com.mehediFifo.CRM.controller;
 
+import com.mehediFifo.CRM.DTO.CampaignDataDTO;
 import com.mehediFifo.CRM.service.DynamicTableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/dynamic")
-//@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 @CrossOrigin(origins = {"http://43.231.78.77:5011", "http://crm.fifo-tech.com:5011", "http://localhost:4200", "https://crm.fifo-tech.com"}, allowCredentials = "true")
 public class DynamicTableController {
 
@@ -46,7 +43,6 @@ public class DynamicTableController {
         return dynamicTableService.getUniqueTargetSelector(tableName);
     }
 
-
     @PostMapping("/updateData")
     public ResponseEntity<Map<String, String>> updateData(
             @RequestParam String tableName,
@@ -63,12 +59,6 @@ public class DynamicTableController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
-
-
-//    @PostMapping("/reGenerateData")
-//    public void reGenerate(String tableName, String dataDate) {
-//        dynamicTableService.reGenerateData(tableName, dataDate);
-//    }
 
     @PostMapping("/reGenerateData")
     public void reGenerate(
@@ -102,5 +92,10 @@ public class DynamicTableController {
     @DeleteMapping("/deleteCampaignTable")
     public void deleteCampaignTable(String campaignName){
         dynamicTableService.dropCampaignTable(campaignName);
+    }
+
+    @GetMapping("/dashboard")
+    public List<CampaignDataDTO> getCampaignData() {
+        return dynamicTableService.getAllCampaignData();
     }
 }

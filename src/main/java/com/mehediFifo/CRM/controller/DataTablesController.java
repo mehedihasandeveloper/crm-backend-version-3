@@ -1,10 +1,12 @@
 package com.mehediFifo.CRM.controller;
 
+import com.mehediFifo.CRM.DTO.CampaignDataDTO;
 import com.mehediFifo.CRM.config.APIResponse;
 import com.mehediFifo.CRM.entity.DataTables;
 import com.mehediFifo.CRM.service.DataTablesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -51,4 +53,5 @@ public class DataTablesController {
     public Integer getTotalDataTables() {
         return service.getTotalDataTables();
     }
+
 }
