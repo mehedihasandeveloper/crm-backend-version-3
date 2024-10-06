@@ -35,12 +35,9 @@ public class QcReport {
     private int fatal;
     private String fatalReason;
     private String easVoiceMatchedWithReport;
-    private int total;
-    private int agentGrade;
+    private Integer total;
+    private String agentGrade;
+    @Column(length = 500)
     private String suggestion;
     private String qcInspector;
-
-
-
-
 }
