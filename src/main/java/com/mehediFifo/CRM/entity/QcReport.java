@@ -13,7 +13,6 @@ public class QcReport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-//    @Column(length = 500)
     private String callDate;
     private String agentName;
     private String agentId;
@@ -32,6 +31,7 @@ public class QcReport {
     private int acknowledgementAndFollowUp;
     private int poorObjectionAndNegotiationSkill;
     private int crm;
+    private int closing;
     private int fatal;
     private String fatalReason;
     private String easVoiceMatchedWithReport;
