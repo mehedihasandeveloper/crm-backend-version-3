@@ -1,14 +1,13 @@
 package com.mehediFifo.CRM.controller;
 
 import com.mehediFifo.CRM.config.APIResponse;
-import com.mehediFifo.CRM.entity.Agent;
 import com.mehediFifo.CRM.entity.QcReport;
+import com.mehediFifo.CRM.entity.QcReportClient;
 import com.mehediFifo.CRM.service.QcReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/qcReport")
@@ -21,6 +20,11 @@ public class QcReportController {
     @PostMapping("/add")
     public QcReport addQC(@RequestBody QcReport qcReport) {
         return service.addQcReport(qcReport);
+    }
+
+    @PostMapping("/addforclient")
+    public QcReportClient addQC(@RequestBody QcReportClient qcReport) {
+        return service.addQcReportClient(qcReport);
     }
 
     @GetMapping("/getqcreportbyqcinspector/{offset}/{pageSize}")

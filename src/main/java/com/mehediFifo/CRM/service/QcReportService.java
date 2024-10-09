@@ -2,7 +2,9 @@ package com.mehediFifo.CRM.service;
 
 import com.mehediFifo.CRM.entity.Agent;
 import com.mehediFifo.CRM.entity.QcReport;
+import com.mehediFifo.CRM.entity.QcReportClient;
 import com.mehediFifo.CRM.repository.AgentRepository;
+import com.mehediFifo.CRM.repository.QcReportClientRepo;
 import com.mehediFifo.CRM.repository.QcReportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,6 +22,9 @@ public class QcReportService {
     @Autowired
     private AgentRepository agentRepository;
 
+    @Autowired
+    private QcReportClientRepo clientRepository;
+
     public synchronized QcReport addQcReport(QcReport qcReport) {
 
         Optional<Agent> agentOpt = agentRepository.findByAgentId(qcReport.getAgentId());
@@ -32,6 +37,20 @@ public class QcReportService {
         }
 
         return repository.save(qcReport);
+    }
+
+    public synchronized QcReportClient addQcReportClient(QcReportClient qcReport) {
+
+        Optional<Agent> agentOpt = agentRepository.findByAgentId(qcReport.getAgentId());
+
+        if (agentOpt.isPresent()) {
+            Agent agent = agentOpt.get();
+            qcReport.setAgentName(agent.getName());
+        } else {
+            throw new RuntimeException("Agent not found with agentId: " + qcReport.getAgentId());
+        }
+
+        return clientRepository.save(qcReport);
     }
 
 
