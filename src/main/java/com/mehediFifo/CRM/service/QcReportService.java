@@ -58,6 +58,9 @@ public class QcReportService {
         return repository.findAllByQcInspector(username, PageRequest.of(offset, pageSize));
     }
 
+    public Page<QcReportClient> getAllQcRecordsClientByQcInspectorWithPagination(String username, int offset, int pageSize) {
+        return clientRepository.findAllByQcInspector(username, PageRequest.of(offset, pageSize));
+    }
 
     public Page<QcReport> getAllQcReportWithPagination(int offset, int pageSize) {
         return repository.findAll(PageRequest.of(offset, pageSize));
@@ -94,4 +97,6 @@ public class QcReportService {
         existingQcReport.setSuggestion(qcReport.getSuggestion());
         return repository.save(existingQcReport);
     }
+
+
 }

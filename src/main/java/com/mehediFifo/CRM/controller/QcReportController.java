@@ -35,7 +35,15 @@ public class QcReportController {
         Page<QcReport> qcReportWithPagination = service.getAllQcReportByQcInspectorWithPagination(username, offset, pageSize);
         return new APIResponse<>(qcReportWithPagination.getSize(), qcReportWithPagination);
     }
-
+   // Qc Records Client view by user
+    @GetMapping("/getQcRecordsClientViewByQcInspector/{offset}/{pageSize}")
+    public APIResponse<Page<QcReportClient>> getQcRecordsClientView(
+            @RequestParam String username,
+            @PathVariable int offset,
+            @PathVariable int pageSize){
+        Page<QcReportClient> qcRecordsWithPagination = service.getAllQcRecordsClientByQcInspectorWithPagination(username, offset, pageSize);
+        return new APIResponse<>(qcRecordsWithPagination.getSize(), qcRecordsWithPagination);
+    }
 
     @GetMapping("/getallqcreports/{offset}/{pageSize}")
     public APIResponse<Page<QcReport>> getAllQcReportsWithPagination( @PathVariable int offset,
@@ -43,6 +51,8 @@ public class QcReportController {
         Page<QcReport> qcReportWithPagination = service.getAllQcReportWithPagination(offset, pageSize);
         return new APIResponse<>(qcReportWithPagination.getSize(), qcReportWithPagination);
     }
+
+
 
     @DeleteMapping("/deleteQc/{id}")
     public void deleteQc(@PathVariable Long id){
