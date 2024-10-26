@@ -70,6 +70,10 @@ public class QcReportService {
         repository.deleteById(id);
     }
 
+    public void removeClientQc(Long id) {
+        clientRepository.deleteById(id);
+    }
+
     public QcReport getQcById(Long id) {
         return repository.findById(id).get();
     }
@@ -99,4 +103,35 @@ public class QcReportService {
     }
 
 
+    public QcReportClient updateClientQcReport(QcReportClient qcReportClient) {
+        QcReportClient existingClientQcReport = clientRepository.findById(qcReportClient.getId()).orElse(qcReportClient);
+        existingClientQcReport.setGreetingsMarks(qcReportClient.getGreetingsMarks());
+        existingClientQcReport.setLivelinessMarks(qcReportClient.getLivelinessMarks());
+        existingClientQcReport.setPronunciationMarks(qcReportClient.getPronunciationMarks());
+        existingClientQcReport.setMumblingMarks(qcReportClient.getMumblingMarks());
+        existingClientQcReport.setPaceMarks(qcReportClient.getPaceMarks());
+        existingClientQcReport.setPitchMarks(qcReportClient.getPitchMarks());
+        existingClientQcReport.setCourtesyMarks(qcReportClient.getCourtesyMarks());
+        existingClientQcReport.setHoldProcessMarks(qcReportClient.getHoldProcessMarks());
+        existingClientQcReport.setTakingPermissionMarks(qcReportClient.getTakingPermissionMarks());
+        existingClientQcReport.setAcknowledgementAndFollowUpMarks(qcReportClient.getAcknowledgementAndFollowUpMarks());
+        existingClientQcReport.setPoorObjectionAndNegotiationSkillMarks(qcReportClient.getPoorObjectionAndNegotiationSkillMarks());
+        existingClientQcReport.setCrmMarks(qcReportClient.getCrmMarks());
+        existingClientQcReport.setClosingMarks(qcReportClient.getClosingMarks());
+        existingClientQcReport.setFatalMarks(qcReportClient.getFatalMarks());
+        existingClientQcReport.setFatalReasonMarks(qcReportClient.getFatalReasonMarks());
+        existingClientQcReport.setEasVoiceMatchedWithReportMarks(qcReportClient.getEasVoiceMatchedWithReportMarks());
+        existingClientQcReport.setTotal(qcReportClient.getTotal());
+        existingClientQcReport.setAgentGrade(qcReportClient.getAgentGrade());
+        existingClientQcReport.setSuggestionMarks(qcReportClient.getSuggestionMarks());
+        return clientRepository.save(existingClientQcReport);
+    }
+
+    public QcReportClient getClientQcRecordById(Long id) {
+        return clientRepository.findById(id).get();
+    }
+
+    public List<QcReport> getAllQcRecords(String date) {
+        return repository.findAllByCallDate(date);
+    }
 }

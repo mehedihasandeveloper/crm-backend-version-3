@@ -12,4 +12,6 @@ import java.util.List;
 public interface QcReportRepository extends JpaRepository<QcReport, Long> {
 
     Page<QcReport> findAllByQcInspector(String username, Pageable pageable);
+
+    List<QcReport> findAllByCallDate(String date);
 }
