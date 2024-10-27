@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -89,11 +90,30 @@ public class QcReportController {
     }
 
     // get all In-house QC records for Excel report
-    @GetMapping("/get-all-qc-records-inhouse-for-excel-print")
-    public List<QcReport> getAllQcReport(String date){
-        return service.getAllQcRecords(date);
+    @GetMapping("/get-all-qc-records-in-house-for-excel-print")
+    public List<Map<String, Object>> getAllQcReportInHouse(String date) {
+        return service.getAllQcRecordsInHouse(date);
     }
 
-    
+    // get all Client QC records for Excel report
+    @GetMapping("/get-all-qc-records-client-for-excel-print")
+    public List<Map<String, Object>> getAllQcReportClient(String date) {
+        return service.getAllQcRecordsClient(date);
+    }
+
+
+    // get distinct dates for downloading reports for In-house need
+
+    @GetMapping("/unique-dates-download-reports-in-house")
+    public List<String> getUniqueDatesInHouse(){
+        return service.getUniqueDatesInHouseForReporting();
+    }
+
+    // get distinct dates for downloading reports for client need
+
+    @GetMapping("/unique-dates-download-reports-client")
+    public List<String> getUniqueDatesClient(){
+        return service.getUniqueDatesClientForReporting();
+    }
 
 }
