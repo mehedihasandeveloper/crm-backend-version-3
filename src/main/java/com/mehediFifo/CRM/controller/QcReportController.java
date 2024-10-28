@@ -1,13 +1,17 @@
 package com.mehediFifo.CRM.controller;
 
+import com.mehediFifo.CRM.DTO.AgentSummary;
+import com.mehediFifo.CRM.DTO.DateRangeSummary;
 import com.mehediFifo.CRM.config.APIResponse;
 import com.mehediFifo.CRM.entity.QcReport;
 import com.mehediFifo.CRM.entity.QcReportClient;
 import com.mehediFifo.CRM.service.QcReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -114,6 +118,18 @@ public class QcReportController {
     @GetMapping("/unique-dates-download-reports-client")
     public List<String> getUniqueDatesClient(){
         return service.getUniqueDatesClientForReporting();
+    }
+
+    @GetMapping("/qc-report/summary")
+    public List<AgentSummary> getAgentSummaries(@RequestParam String callDate) {
+        return service.getAgentSummaries(callDate);
+    }
+
+    @GetMapping("/date-range-summary")
+    public List<DateRangeSummary> getDateRangeSummary(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        return service.getSummaryWithinDateRange(startDate, endDate);
     }
 
 }
