@@ -21,4 +21,7 @@ public interface QcReportRepository extends JpaRepository<QcReport, Long> {
 
 
     List<QcReport> findByCallDateBetween(String string, String string1);
+
+
+    List<QcReport> findByAgentId(String agentId);
 }

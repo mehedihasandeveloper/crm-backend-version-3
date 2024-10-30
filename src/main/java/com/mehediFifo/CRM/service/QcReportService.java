@@ -318,4 +318,8 @@ public class QcReportService {
 
         return summaries;
     }
+
+    public List<QcReport> getAllQcRecordsByAgentId(String agentId) {
+        return repository.findByAgentId(agentId);
+    }
 }

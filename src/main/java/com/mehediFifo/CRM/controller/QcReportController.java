@@ -132,4 +132,10 @@ public class QcReportController {
         return service.getSummaryWithinDateRange(startDate, endDate);
     }
 
+    // get qc records by agentId
+    @GetMapping("list-of-qc-records-by-agent-id")
+    public List<QcReport> getAllByAgentId(String agentId){
+        return service.getAllQcRecordsByAgentId(agentId);
+    }
+
 }
