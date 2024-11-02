@@ -3,12 +3,16 @@ package com.mehediFifo.CRM.controller;
 import com.mehediFifo.CRM.DTO.AgentSummary;
 import com.mehediFifo.CRM.DTO.DateRangeSummary;
 import com.mehediFifo.CRM.config.APIResponse;
+import com.mehediFifo.CRM.entity.AgentReview;
 import com.mehediFifo.CRM.entity.QcReport;
 import com.mehediFifo.CRM.entity.QcReportClient;
+import com.mehediFifo.CRM.entity.QcReportFile;
+import com.mehediFifo.CRM.repository.AgentReviewRepository;
 import com.mehediFifo.CRM.service.QcReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -23,6 +27,9 @@ public class QcReportController {
 
     @Autowired
     private QcReportService service;
+
+    @Autowired
+    private AgentReviewRepository reviewRepository;
 
     @PostMapping("/add")
     public QcReport addQC(@RequestBody QcReport qcReport) {
@@ -136,6 +143,24 @@ public class QcReportController {
     @GetMapping("list-of-qc-records-by-agent-id")
     public List<QcReport> getAllByAgentId(String agentId){
         return service.getAllQcRecordsByAgentId(agentId);
+    }
+
+// add file path name
+    @PostMapping("/add-qc-report-file")
+    public QcReportFile addReportFile(@RequestBody QcReportFile reportFile) {
+        return service.save(reportFile);
+    }
+
+    // get file path name
+    @GetMapping("/all-qc-report-file")
+    public List<QcReportFile> getAllReportFiles() {
+        return service.getAllReportFiles();
+    }
+
+    @PostMapping("/submit")
+    public ResponseEntity<AgentReview> submitReview(@RequestBody AgentReview review) {
+        AgentReview savedReview = reviewRepository.save(review);
+        return ResponseEntity.ok(savedReview);
     }
 
 }

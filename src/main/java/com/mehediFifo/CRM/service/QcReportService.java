@@ -6,8 +6,10 @@ import com.mehediFifo.CRM.DTO.DateRangeSummary;
 import com.mehediFifo.CRM.entity.Agent;
 import com.mehediFifo.CRM.entity.QcReport;
 import com.mehediFifo.CRM.entity.QcReportClient;
+import com.mehediFifo.CRM.entity.QcReportFile;
 import com.mehediFifo.CRM.repository.AgentRepository;
 import com.mehediFifo.CRM.repository.QcReportClientRepo;
+import com.mehediFifo.CRM.repository.QcReportFileRepository;
 import com.mehediFifo.CRM.repository.QcReportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,6 +31,9 @@ public class QcReportService {
 
     @Autowired
     private QcReportClientRepo clientRepository;
+
+    @Autowired
+    private QcReportFileRepository qcReportFileRepository;
 
     public synchronized QcReport addQcReport(QcReport qcReport) {
 
@@ -321,5 +326,13 @@ public class QcReportService {
 
     public List<QcReport> getAllQcRecordsByAgentId(String agentId) {
         return repository.findByAgentId(agentId);
+    }
+
+    public QcReportFile save(QcReportFile reportFile) {
+        return qcReportFileRepository.save(reportFile);
+    }
+
+    public List<QcReportFile> getAllReportFiles() {
+        return qcReportFileRepository.findAll();
     }
 }
