@@ -7,10 +7,7 @@ import com.mehediFifo.CRM.entity.Agent;
 import com.mehediFifo.CRM.entity.QcReport;
 import com.mehediFifo.CRM.entity.QcReportClient;
 import com.mehediFifo.CRM.entity.QcReportFile;
-import com.mehediFifo.CRM.repository.AgentRepository;
-import com.mehediFifo.CRM.repository.QcReportClientRepo;
-import com.mehediFifo.CRM.repository.QcReportFileRepository;
-import com.mehediFifo.CRM.repository.QcReportRepository;
+import com.mehediFifo.CRM.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,6 +31,9 @@ public class QcReportService {
 
     @Autowired
     private QcReportFileRepository qcReportFileRepository;
+
+    @Autowired
+    private AgentReviewRepository reviewRepository;
 
     public synchronized QcReport addQcReport(QcReport qcReport) {
 
@@ -334,5 +334,16 @@ public class QcReportService {
 
     public List<QcReportFile> getAllReportFiles() {
         return qcReportFileRepository.findAll();
+    }
+
+
+    public List<QcReport> getAllQcRecordsByAgentIdExcludingReviewed(String agentId) {
+        // Get all QcReport records for the given agentId
+        List<QcReport> qcReports = repository.findByAgentId(agentId);
+
+        // Filter out QcReports that have a matching qcId in AgentReview
+        return qcReports.stream()
+                .filter(qcReport -> reviewRepository.findByQcId(qcReport.getId()).isEmpty())
+                .collect(Collectors.toList());
     }
 }

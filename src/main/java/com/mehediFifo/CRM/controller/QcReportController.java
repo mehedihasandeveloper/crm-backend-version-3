@@ -140,9 +140,14 @@ public class QcReportController {
     }
 
     // get qc records by agentId
+//    @GetMapping("list-of-qc-records-by-agent-id")
+//    public List<QcReport> getAllByAgentId(String agentId){
+//        return service.getAllQcRecordsByAgentId(agentId);
+//    }
+
     @GetMapping("list-of-qc-records-by-agent-id")
-    public List<QcReport> getAllByAgentId(String agentId){
-        return service.getAllQcRecordsByAgentId(agentId);
+    public List<QcReport> getAllByAgentIdExcludingReviewed(@RequestParam String agentId) {
+        return service.getAllQcRecordsByAgentIdExcludingReviewed(agentId);
     }
 
 // add file path name

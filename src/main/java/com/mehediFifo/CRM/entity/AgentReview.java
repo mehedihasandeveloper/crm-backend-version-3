@@ -23,4 +23,5 @@ public class AgentReview {
     private String qcInspector;
     private String agreed; // New field for Agreed status
     private Boolean raiseConcern; // New field for Raise Concern
+    private Long qcId;
 }

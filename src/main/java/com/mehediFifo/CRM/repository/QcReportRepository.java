@@ -19,9 +19,9 @@ public interface QcReportRepository extends JpaRepository<QcReport, Long> {
     @Query("SELECT DISTINCT c.callDate FROM QcReport c")
     List<String> findDistinctCallDate();
 
-
     List<QcReport> findByCallDateBetween(String string, String string1);
 
-
     List<QcReport> findByAgentId(String agentId);
+
+
 }
