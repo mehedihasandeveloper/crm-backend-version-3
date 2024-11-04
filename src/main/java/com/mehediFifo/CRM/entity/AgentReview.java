@@ -1,9 +1,6 @@
 package com.mehediFifo.CRM.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,7 +18,12 @@ public class AgentReview {
     private Integer total;
     private String suggestion;
     private String qcInspector;
-    private String agreed; // New field for Agreed status
-    private Boolean raiseConcern; // New field for Raise Concern
+    private String agreed;
+    private Boolean raiseConcern;
+    @Column(length = 500)
+    private String comment;
+    private Boolean isResolved = false;
+    @Column(length = 500)
+    private String resolvedMessage;
     private Long qcId;
 }

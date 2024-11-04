@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface AgentReviewRepository extends JpaRepository<AgentReview, Long> {
     List<AgentReview> findByQcId(Long qcId);
+    List<AgentReview> findByIsResolvedFalse();
 }

@@ -168,4 +168,24 @@ public class QcReportController {
         return ResponseEntity.ok(savedReview);
     }
 
+    @GetMapping("/get-agent-reviews")
+    public List<AgentReview> getAgentReviews() {
+        return reviewRepository.findByIsResolvedFalse();
+    }
+
+    @PutMapping("/agent-review/{id}")
+    public ResponseEntity<AgentReview> updateReviewStatus(
+            @PathVariable Long id,
+            @RequestBody AgentReview updateData) {
+
+        return reviewRepository.findById(id)
+                .map(review -> {
+                    review.setIsResolved(updateData.getIsResolved());
+                    review.setResolvedMessage(updateData.getResolvedMessage());
+                    AgentReview updatedReview = reviewRepository.save(review);
+                    return ResponseEntity.ok(updatedReview);
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
 }
