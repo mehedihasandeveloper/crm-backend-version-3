@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -26,10 +27,10 @@ public class CsvController {
 
     @GetMapping("/download/csv")
     public ResponseEntity<byte[]> downloadCSV() {
-        String[] columns = {"name", "type", "agentId","joiningDate", "cellNumber", "bankAcNumber","nagadAcNumber", "bkashAcNumber"};
+        String[] columns = {"name", "type", "agentId", "joiningDate", "cellNumber", "bankAcNumber", "nagadAcNumber", "bkashAcNumber"};
         String[][] data = {
-                {"John Doe", "Physical", "420", "01/01/2024", "01925111043", "100100100", "200200200","300300300"},
-                {"Doe John", "Virtual", "421", "01/01/2024", "01925111043", "100100100", "200200200","300300300"}
+                {"John Doe", "Physical", "420", "01/01/2024", "01925111043", "100100100", "200200200", "300300300"},
+                {"Doe John", "Virtual", "421", "01/01/2024", "01925111043", "100100100", "200200200", "300300300"}
         };
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -91,36 +92,72 @@ public class CsvController {
         }
     }
 
-    @GetMapping("/generateExcel")
-    public ResponseEntity<byte[]> generateExcel(@RequestParam String tableName,
-                                                @RequestParam String dataDate) {
+//    @GetMapping("/generateExcel")
+//    public ResponseEntity<byte[]> generateExcel(@RequestParam String tableName,
+//                                                @RequestParam String dataDate) {
+//        try {
+//            byte[] excelData = dynamicTableService.generateExcel(tableName, dataDate);
+//
+//            HttpHeaders headers = new HttpHeaders();
+//            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=report_for_d.xlsx");
+//            headers.add(HttpHeaders.CONTENT_TYPE, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+//
+//            return new ResponseEntity<>(excelData, headers, HttpStatus.OK);
+//        } catch (IOException e) {
+//            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+
+    @GetMapping("/generateCsv")
+    public ResponseEntity<byte[]> generateCsv(@RequestParam String tableName,
+                                              @RequestParam String dataDate) {
         try {
-            byte[] excelData = dynamicTableService.generateExcel(tableName, dataDate);
+            byte[] csvData = dynamicTableService.generateCsv(tableName, dataDate);
 
             HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=report_for_d.xlsx");
-            headers.add(HttpHeaders.CONTENT_TYPE, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=report_for_d.csv");
+            headers.add(HttpHeaders.CONTENT_TYPE, "text/csv");
 
-            return new ResponseEntity<>(excelData, headers, HttpStatus.OK);
+            return new ResponseEntity<>(csvData, headers, HttpStatus.OK);
         } catch (IOException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @GetMapping("/generateFullReportExcel")
-    public ResponseEntity<byte[]> generateExcel(@RequestParam String tableName,
-                                                @RequestParam String startDate,
-                                                @RequestParam String endDate) {
+
+//    @GetMapping("/generateFullReportExcel")
+//    public ResponseEntity<byte[]> generateExcel(@RequestParam String tableName,
+//                                                @RequestParam String startDate,
+//                                                @RequestParam String endDate) {
+//        try {
+//            byte[] excelData = dynamicTableService.generateFullReportInExcel(tableName, startDate, endDate);
+//
+//            HttpHeaders headers = new HttpHeaders();
+//            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=full_report.xlsx");
+//            headers.add(HttpHeaders.CONTENT_TYPE, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+//
+//            return new ResponseEntity<>(excelData, headers, HttpStatus.OK);
+//        } catch (IOException e) {
+//            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+
+    @GetMapping("/generateFullReportCsv")
+    public ResponseEntity<byte[]> generateCsv(@RequestParam String tableName,
+                                              @RequestParam String startDate,
+                                              @RequestParam String endDate) {
         try {
-            byte[] excelData = dynamicTableService.generateFullReportInExcel(tableName, startDate, endDate);
+            byte[] csvData = dynamicTableService.generateFullReportInCsv(tableName, startDate, endDate);
 
             HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=full_report.xlsx");
-            headers.add(HttpHeaders.CONTENT_TYPE, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=full_report.csv");
+            headers.add(HttpHeaders.CONTENT_TYPE, "text/csv");
 
-            return new ResponseEntity<>(excelData, headers, HttpStatus.OK);
+            return new ResponseEntity<>(csvData, headers, HttpStatus.OK);
         } catch (IOException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
 }

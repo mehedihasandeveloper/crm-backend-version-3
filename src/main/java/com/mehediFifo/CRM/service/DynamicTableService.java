@@ -7,17 +7,13 @@ import com.opencsv.CSVWriter;
 import com.opencsv.exceptions.CsvException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -28,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.sql.ResultSet;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
@@ -364,69 +361,167 @@ public class DynamicTableService {
         jdbcTemplate.update(deleteQuery, dataDate);
     }
 
+//    @Transactional(readOnly = true)
+//    public byte[] generateExcel(String tableName, String dataDate) throws IOException {
+//        String query = "SELECT * FROM " + tableName + " WHERE for_d = 'd' AND data_date = ?";
+//        List<Map<String, Object>> results = jdbcTemplate.queryForList(query, dataDate);
+//        Workbook workbook = new XSSFWorkbook();
+//        Sheet sheet = workbook.createSheet("Results");
+//        if (!results.isEmpty()) {
+//            Row headerRow = sheet.createRow(0);
+//            Map<String, Object> firstRow = results.get(0);
+//            int headerIndex = 0;
+//            for (String columnName : firstRow.keySet()) {
+//                Cell cell = headerRow.createCell(headerIndex++);
+//                cell.setCellValue(columnName);
+//            }
+//            int rowIndex = 1;
+//            for (Map<String, Object> row : results) {
+//                Row dataRow = sheet.createRow(rowIndex++);
+//                int cellIndex = 0;
+//                for (Object cellValue : row.values()) {
+//                    Cell cell = dataRow.createCell(cellIndex++);
+//                    if (cellValue != null) {
+//                        cell.setCellValue(cellValue.toString());
+//                    }
+//                }
+//            }
+//        }
+//        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//        workbook.write(outputStream);
+//        workbook.close();
+//        return outputStream.toByteArray();
+//    }
+
+
     @Transactional(readOnly = true)
-    public byte[] generateExcel(String tableName, String dataDate) throws IOException {
-        String query = "SELECT * FROM " + tableName + " WHERE for_d = 'd' AND data_date = ?";
-        List<Map<String, Object>> results = jdbcTemplate.queryForList(query, dataDate);
-        Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Results");
-        if (!results.isEmpty()) {
-            Row headerRow = sheet.createRow(0);
-            Map<String, Object> firstRow = results.get(0);
-            int headerIndex = 0;
-            for (String columnName : firstRow.keySet()) {
-                Cell cell = headerRow.createCell(headerIndex++);
-                cell.setCellValue(columnName);
-            }
-            int rowIndex = 1;
-            for (Map<String, Object> row : results) {
-                Row dataRow = sheet.createRow(rowIndex++);
-                int cellIndex = 0;
-                for (Object cellValue : row.values()) {
-                    Cell cell = dataRow.createCell(cellIndex++);
-                    if (cellValue != null) {
-                        cell.setCellValue(cellValue.toString());
-                    }
+    public byte[] generateCsv(String tableName, String dataDate) throws IOException {
+        int pageSize = 10000;  // The size of each batch to fetch
+        int offset = 0;        // Start from the first page
+        boolean dataAvailable = true;  // Flag to check if there is more data to fetch
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream));
+
+        // Process data in chunks (pagination)
+        while (dataAvailable) {
+            // SQL query to fetch data in chunks using LIMIT and OFFSET
+            String query = "SELECT * FROM " + tableName + " WHERE for_d = 'd' AND data_date = ? LIMIT ? OFFSET ?";
+            List<Map<String, Object>> results = jdbcTemplate.queryForList(query, dataDate, pageSize, offset);
+
+            if (results.isEmpty()) {
+                dataAvailable = false;  // No more data, stop the loop
+            } else {
+                // Write the header row only once
+                if (offset == 0) {
+                    Map<String, Object> firstRow = results.get(0);
+                    // Join the column names (keys) as the header for CSV
+                    writer.write(String.join(",", firstRow.keySet()));
+                    writer.newLine();
                 }
+
+                // Write the data rows
+                for (Map<String, Object> row : results) {
+                    // Collect values and handle nulls
+                    List<String> values = row.values().stream()
+                            .map(val -> val != null ? val.toString() : "")
+                            .collect(Collectors.toList());
+
+                    // Join the values as CSV row
+                    writer.write(String.join(",", values));
+                    writer.newLine();
+                }
+
+                // Increment the offset for the next batch of data
+                offset += pageSize;
             }
         }
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        workbook.write(outputStream);
-        workbook.close();
+
+        // Flush the writer to the output stream and close it
+        writer.flush();
+        writer.close();
+
         return outputStream.toByteArray();
     }
 
+
+//    @Transactional(readOnly = true)
+//    public byte[] generateFullReportInExcel(String tableName, String startDate, String endDate) throws IOException {
+//        String query = "SELECT * FROM " + tableName + " WHERE data_date BETWEEN ? AND ?";
+//        List<Map<String, Object>> results = jdbcTemplate.queryForList(query, startDate, endDate);
+//        Workbook workbook = new XSSFWorkbook();
+//        Sheet sheet = workbook.createSheet("Results");
+//        if (!results.isEmpty()) {
+//            Row headerRow = sheet.createRow(0);
+//            Map<String, Object> firstRow = results.get(0);
+//            int headerIndex = 0;
+//            for (String columnName : firstRow.keySet()) {
+//                Cell cell = headerRow.createCell(headerIndex++);
+//                cell.setCellValue(columnName);
+//            }
+//            int rowIndex = 1;
+//            for (Map<String, Object> row : results) {
+//                Row dataRow = sheet.createRow(rowIndex++);
+//                int cellIndex = 0;
+//                for (Object cellValue : row.values()) {
+//                    Cell cell = dataRow.createCell(cellIndex++);
+//                    if (cellValue != null) {
+//                        cell.setCellValue(cellValue.toString());
+//                    }
+//                }
+//            }
+//        }
+//        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//        workbook.write(outputStream);
+//        workbook.close();
+//        return outputStream.toByteArray();
+//    }
+
     @Transactional(readOnly = true)
-    public byte[] generateFullReportInExcel(String tableName, String startDate, String endDate) throws IOException {
-        String query = "SELECT * FROM " + tableName + " WHERE data_date BETWEEN ? AND ?";
-        List<Map<String, Object>> results = jdbcTemplate.queryForList(query, startDate, endDate);
-        Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Results");
-        if (!results.isEmpty()) {
-            Row headerRow = sheet.createRow(0);
-            Map<String, Object> firstRow = results.get(0);
-            int headerIndex = 0;
-            for (String columnName : firstRow.keySet()) {
-                Cell cell = headerRow.createCell(headerIndex++);
-                cell.setCellValue(columnName);
-            }
-            int rowIndex = 1;
-            for (Map<String, Object> row : results) {
-                Row dataRow = sheet.createRow(rowIndex++);
-                int cellIndex = 0;
-                for (Object cellValue : row.values()) {
-                    Cell cell = dataRow.createCell(cellIndex++);
-                    if (cellValue != null) {
-                        cell.setCellValue(cellValue.toString());
-                    }
+    public byte[] generateFullReportInCsv(String tableName, String startDate, String endDate) throws IOException {
+        int pageSize = 10000;  // Size of each batch (10k rows)
+        int offset = 0;        // Start with the first page
+        boolean dataAvailable = true;  // Flag to check if more data is available
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream));
+
+        // Pagination: Loop through the data in batches
+        while (dataAvailable) {
+            String query = "SELECT * FROM " + tableName + " WHERE data_date BETWEEN ? AND ? LIMIT ? OFFSET ?";
+            List<Map<String, Object>> results = jdbcTemplate.queryForList(query, startDate, endDate, pageSize, offset);
+
+            if (results.isEmpty()) {
+                dataAvailable = false;  // No more data available, break the loop
+            } else {
+                // Write the header row only once (for the first batch of results)
+                if (offset == 0) {
+                    Map<String, Object> firstRow = results.get(0);
+                    String header = String.join(",", firstRow.keySet());
+                    writer.write(header);
+                    writer.newLine();
                 }
+
+                // Write data rows for each batch
+                for (Map<String, Object> row : results) {
+                    String rowData = row.values().stream()
+                            .map(value -> value != null ? value.toString() : "")
+                            .collect(Collectors.joining(","));
+                    writer.write(rowData);
+                    writer.newLine();
+                }
+
+                offset += pageSize;  // Move to the next page
             }
         }
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        workbook.write(outputStream);
-        workbook.close();
+
+        // Close the writer and return the data
+        writer.flush();
+        writer.close();
+
         return outputStream.toByteArray();
     }
+
+
 
     public List<CampaignDataDTO> getAllCampaignData() {
         List<String> tableNames = repository.findAllCampaignNames();
